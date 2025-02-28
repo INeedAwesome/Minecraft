@@ -10,6 +10,10 @@
 *.userosscache
 *.sln.docstates
 
+#Project Files
+*.vcxproj
+*.filters
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
@@ -28,6 +32,7 @@ x86/
 [Aa][Rr][Mm]64/
 bld/
 [Bb]in/
+[Bb]in-[Ii]nt/
 [Oo]bj/
 [Ll]og/
 [Ll]ogs/
