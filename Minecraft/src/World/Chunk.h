@@ -21,9 +21,9 @@ public:
 	~Chunk();
 	void ClearChunk();
 	
-	glm::vec3 GetPosition();
+	glm::ivec3 GetPosition();
 
-	void SetBlock(const glm::vec3& position, BlockType type);
+	void SetBlock(const glm::ivec3& position, BlockType type);
 	BlockType GetBlock(const glm::vec3& position);
 
 	void Update();
@@ -37,7 +37,7 @@ public:
 	void Generate(const SimplexNoise& noise);
 
 private:
-	glm::vec3 m_Position;
+	glm::ivec3 m_Position;
 	std::array<Block, CHUNK_WIDTH * CHUNK_HEIGHT * CHUNK_DEPTH> m_Blocks;
 
 	bool m_HasChanged = true;

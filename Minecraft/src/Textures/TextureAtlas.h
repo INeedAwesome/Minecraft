@@ -22,7 +22,7 @@ public:
 	}
 private: 
 	TextureAtlas() 
-		: m_Atlas("assets/atlas.png"), m_TextureSize(m_Atlas.GetWidth() / m_AmountTexturesWidth)
+		: m_Atlas("assets/atlas.png"), m_TextureSize((float)m_Atlas.GetWidth() / (float)m_AmountTexturesWidth)
 	{};
 
 private:

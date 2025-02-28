@@ -18,10 +18,9 @@ void World::Update(const glm::vec3& playerPosition, bool deleteChunks)
 
 	for (int i = 0; i < m_Chunks.size() && deleteChunks; i++)
 	{
-		int deltaX = m_Chunks[i]->GetPosition().x * CHUNK_WIDTH - playerPosition.x;
-		int deltaZ = m_Chunks[i]->GetPosition().z * CHUNK_DEPTH - playerPosition.z;
+		int deltaX = m_Chunks[i]->GetPosition().x * CHUNK_WIDTH - (int)playerPosition.x;
+		int deltaZ = m_Chunks[i]->GetPosition().z * CHUNK_DEPTH - (int)playerPosition.z;
 
-		int distance = glm::sqrt(glm::pow(deltaX, 2) + glm::pow(deltaZ, 2));
 		if (deltaX > CHUNK_WIDTH * m_ViewDistance || deltaX < -CHUNK_WIDTH * (m_ViewDistance + 1) || deltaZ > CHUNK_WIDTH * m_ViewDistance || deltaZ < -CHUNK_WIDTH * (m_ViewDistance + 1))
 		{
 			delete m_Chunks[i];
@@ -39,9 +38,9 @@ void World::Render()
 {
 	TextureAtlas::Get().Bind();
 
-	for (std::pair<float, Chunk*> chunk : m_SortedChunks)
+	for (auto& chunk : m_Chunks)
 	{
-		chunk.second->Render();
+		chunk->Render();
 	}
 
 	TextureAtlas::Get().Unbind();
@@ -60,7 +59,7 @@ void World::SortChunksForRendering(const glm::vec3 playerPosition)
 void World::GenerateAroundPlayer(const glm::vec3 playerPosition)
 {
 	//return;
-	glm::vec3 playerChunkPos = { (int)playerPosition.x / CHUNK_WIDTH, 0, (int)playerPosition.z / CHUNK_WIDTH };
+	glm::ivec3 playerChunkPos = { (int)playerPosition.x / CHUNK_WIDTH, 0, (int)playerPosition.z / CHUNK_WIDTH };
 
 	for (int x = playerChunkPos.x - m_ViewDistance; x < m_ViewDistance + playerChunkPos.x; x++)
 	{
@@ -102,7 +101,6 @@ bool World::CastRay(const Ray& ray, glm::ivec3& hitBlock, glm::ivec3& hitNormal,
 
 
 	glm::vec3 rayDir = glm::normalize(direction);
-	//std::cout << rayDir.x << ", " << rayDir.y << ", " << rayDir.z  << std::endl;
 
 	glm::ivec3 blockPos = glm::floor(rayPos);  // Get integer block coordinates
 	glm::vec3 deltaDist = glm::vec3(
@@ -123,7 +121,7 @@ bool World::CastRay(const Ray& ray, glm::ivec3& hitBlock, glm::ivec3& hitNormal,
 		(rayDir.z > 0) ? (blockPos.z + 1 - rayPos.z) * deltaDist.z : (rayPos.z - blockPos.z) * deltaDist.z
 	);
 
-	std::cout << std::endl << std::endl;
+
 	// Step through the world grid
 	for (float distance = 0.0f; distance < maxDistance && distance > -maxDistance; distance += 0.f) {
 		// Check if the block exists in the world
@@ -139,33 +137,25 @@ bool World::CastRay(const Ray& ray, glm::ivec3& hitBlock, glm::ivec3& hitNormal,
 			blockPos.x += step.x;
 			hitNormal = glm::ivec3(-step.x, 0, 0);
 			distance += direction.x;
-			std::cout << "+x: " <<distance << std::endl;
-			continue;
 		}
 		else if (sideDist.y < sideDist.z) {
 			sideDist.y += deltaDist.y;
 			blockPos.y += step.y;
 			hitNormal = glm::ivec3(0, -step.y, 0);
 			distance += direction.y;
-			std::cout << "+y: " << distance << std::endl;
-			continue;
 		}
 		else {
 			sideDist.z += deltaDist.z;
 			blockPos.z += step.z;
 			hitNormal = glm::ivec3(0, 0, -step.z);
 			distance += direction.z;
-			std::cout << "+z: " << distance << std::endl;
-			continue;
 		}
-
-
 	}
 
 	return false;  // No block was hit
 }
 
-BlockType World::GetBlock(const glm::vec3& position)
+BlockType World::GetBlock(const glm::ivec3& position)
 {
 	int chunkX = (position.x < 0) ? (position.x - CHUNK_WIDTH + 1) / CHUNK_WIDTH : position.x / CHUNK_WIDTH;
 	int chunkZ = (position.z < 0) ? (position.z - CHUNK_DEPTH + 1) / CHUNK_DEPTH : position.z / CHUNK_DEPTH;
@@ -184,7 +174,7 @@ BlockType World::GetBlock(const glm::vec3& position)
 	return Air;
 }
 
-void World::SetBlock(const glm::vec3& position, BlockType block)
+void World::SetBlock(const glm::ivec3& position, BlockType block)
 {
 	int chunkX = (position.x < 0) ? (position.x - CHUNK_WIDTH + 1) / CHUNK_WIDTH : position.x / CHUNK_WIDTH;
 	int chunkZ = (position.z < 0) ? (position.z - CHUNK_DEPTH + 1) / CHUNK_DEPTH : position.z / CHUNK_DEPTH;

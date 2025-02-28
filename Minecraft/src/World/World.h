@@ -32,8 +32,8 @@ public:
 
 	bool CastRay(const Ray& ray, glm::ivec3& hitBlock, glm::ivec3& hitNormal, float maxDistance = 10.0f);
 
-	BlockType GetBlock(const glm::vec3& position);
-	void SetBlock(const glm::vec3& position, BlockType block);
+	BlockType GetBlock(const glm::ivec3& position);
+	void SetBlock(const glm::ivec3& position, BlockType block);
 
 private:
 	void GenerateAtPosition(const glm::vec2& pos);

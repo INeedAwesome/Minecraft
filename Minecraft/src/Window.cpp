@@ -239,7 +239,7 @@ LRESULT Window::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	if(msg ==  WM_NCCREATE) {
 		CREATESTRUCT* pcs = (CREATESTRUCT*)lParam; 
 		windowInstance = (Window*)pcs->lpCreateParams;
-		SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG)pcs->lpCreateParams);
+		SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)pcs->lpCreateParams);
 		return TRUE;
 	}
 	else 

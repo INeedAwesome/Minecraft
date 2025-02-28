@@ -19,7 +19,7 @@ void ChunkMesh::Render()
 	m_Vao.Bind();
 	m_Vbo.Bind();
 	m_Ebo.Bind();
-	glDrawElements(GL_TRIANGLES, m_Elements.size(), GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, (GLsizei)m_Elements.size(), GL_UNSIGNED_INT, 0);
 	m_Ebo.Unbind();
 	m_Vbo.Unbind();
 	m_Vao.Unbind();
@@ -31,7 +31,7 @@ void ChunkMesh::Destroy()
 	m_Elements.clear();
 }
 
-void ChunkMesh::CreateMesh(std::array<Block, CHUNK_WIDTH* CHUNK_HEIGHT* CHUNK_DEPTH>& blocks, const glm::vec3& chunkPosition)
+void ChunkMesh::CreateMesh(std::array<Block, CHUNK_WIDTH* CHUNK_HEIGHT* CHUNK_DEPTH>& blocks, const glm::ivec3& chunkPosition)
 {
 	m_ReadyToSendToGPU = false;
 	m_HasUploadedToGPU = false;
@@ -90,10 +90,10 @@ void ChunkMesh::SendDataToGPU()
 	m_Vao.Bind();
 
 	// VERTICES DATA
-	m_Vbo.Load(GL_ARRAY_BUFFER, m_Vertices.size() * sizeof(Vertex));
+	m_Vbo.Load(GL_ARRAY_BUFFER, (unsigned int)m_Vertices.size() * sizeof(Vertex));
 	m_Vbo.SetData(m_Vertices.data());
 
-	int stride = offsetof(Vertex, position);
+	uint64_t stride = offsetof(Vertex, position);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)stride);
 	glEnableVertexAttribArray(0);
 
@@ -103,7 +103,7 @@ void ChunkMesh::SendDataToGPU()
 	glEnableVertexAttribArray(1);
 
 	// INDICES DATA
-	m_Ebo.Load(GL_ELEMENT_ARRAY_BUFFER, m_Elements.size() * sizeof(unsigned int));
+	m_Ebo.Load(GL_ELEMENT_ARRAY_BUFFER, (unsigned int)m_Elements.size() * sizeof(unsigned int));
 	m_Ebo.SetData(m_Elements.data());
 
 	m_Vao.Unbind();
@@ -191,7 +191,7 @@ void ChunkMesh::AddFace(BlockFace face, BlockType type, const glm::vec3 position
 	m_Vertices.push_back(vertices[2]);
 	m_Vertices.push_back(vertices[3]);
 
-	int amountOfBlocks = m_Elements.size() / 6; // This little bitch
+	int amountOfBlocks = (int)m_Elements.size() / 6; // This little bitch
 	m_Elements.push_back(0 + (4 * amountOfBlocks));
 	m_Elements.push_back(1 + (4 * amountOfBlocks));
 	m_Elements.push_back(2 + (4 * amountOfBlocks));
@@ -201,7 +201,7 @@ void ChunkMesh::AddFace(BlockFace face, BlockType type, const glm::vec3 position
 
 }
 
-Block ChunkMesh::GetBlock(const std::array<Block, CHUNK_VOLUME>& blocks, const glm::vec3& position)
+Block ChunkMesh::GetBlock(const std::array<Block, CHUNK_VOLUME>& blocks, const glm::ivec3& position)
 {
 	if (position.x >= CHUNK_WIDTH || position.x < 0 || position.y >= CHUNK_HEIGHT || position.y < 0 || position.z >= CHUNK_DEPTH || position.z < 0)
 	{

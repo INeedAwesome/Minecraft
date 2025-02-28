@@ -28,7 +28,7 @@ public:
 	void Render();
 	void Destroy();
 
-	void CreateMesh(std::array<Block, CHUNK_WIDTH* CHUNK_HEIGHT* CHUNK_DEPTH>& blocks, const glm::vec3& chunkPosition);
+	void CreateMesh(std::array<Block, CHUNK_WIDTH* CHUNK_HEIGHT* CHUNK_DEPTH>& blocks, const glm::ivec3& chunkPosition);
 	void SendDataToGPU();
 
 	bool IsReadyForGPUUpload() const { return m_ReadyToSendToGPU; }
@@ -37,7 +37,7 @@ public:
 private:
 
 	void AddFace(BlockFace face, BlockType type, const glm::vec3 position);
-	Block GetBlock(const std::array<Block, CHUNK_VOLUME>& blocks, const glm::vec3& position);
+	Block GetBlock(const std::array<Block, CHUNK_VOLUME>& blocks, const glm::ivec3& position);
 
 private: 
 	glm::vec3 m_ChunkPosition;

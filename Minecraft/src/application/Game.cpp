@@ -55,8 +55,8 @@ bool Game::Init()
 		std::cout << "Could not create a framebuffer!" << std::endl;
 		return false;
 	}
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_BLEND);
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//glEnable(GL_BLEND);
 
 	// Crosshair initializiation
 	static float verticesAndTexCoords[] =
@@ -110,7 +110,6 @@ bool Game::Init()
 	m_Player.SetPosition({ 0, 70, 0 });
 
 	m_World.GenerateAroundPlayer(m_Player.GetPosition());
-
 
 	return true;
 }
@@ -427,7 +426,7 @@ void Game::SetLineValues(const glm::ivec3 blockPos)
 	};
 
 	// Define the 12 edges of the cube (pairs of vertex indices)
-	std::vector <glm::vec2> edges = {
+	std::vector <glm::ivec2> edges = {
 		{0, 1}, {1, 2}, {2, 3}, {3, 0}, // Bottom face
 		{4, 5}, {5, 6}, {6, 7}, {7, 4}, // Top face
 		{0, 4}, {1, 5}, {2, 6}, {3, 7}  // Vertical edges

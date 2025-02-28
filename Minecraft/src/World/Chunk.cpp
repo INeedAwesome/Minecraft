@@ -26,14 +26,14 @@ void Chunk::ClearChunk()
 	m_ChunkMesh.Destroy();
 }
 
-glm::vec3 Chunk::GetPosition()
+glm::ivec3 Chunk::GetPosition()
 {
 	return m_Position;
 }
 
-void Chunk::SetBlock(const glm::vec3& position, BlockType type)
+void Chunk::SetBlock(const glm::ivec3& position, BlockType type)
 {
-	glm::vec3 local_pos = glm::vec3(glm::floor(position.x), glm::floor(position.y), glm::floor(position.z));
+	glm::ivec3 local_pos = glm::ivec3(glm::floor(position.x), glm::floor(position.y), glm::floor(position.z));
 	int posInList = ((local_pos.x * CHUNK_HEIGHT * CHUNK_DEPTH) + (local_pos.y * CHUNK_DEPTH)) + local_pos.z;
 	m_Blocks[posInList].blockType = type;
 	m_HasChanged = true;
@@ -41,7 +41,7 @@ void Chunk::SetBlock(const glm::vec3& position, BlockType type)
 
 BlockType Chunk::GetBlock(const glm::vec3& position)
 {
-	glm::vec3 local_pos = glm::vec3(glm::floor(position.x), glm::floor(position.y), glm::floor(position.z));
+	glm::ivec3 local_pos = glm::vec3(glm::floor(position.x), glm::floor(position.y), glm::floor(position.z));
 	int posInList = ((local_pos.x * CHUNK_HEIGHT * CHUNK_DEPTH) + (local_pos.y * CHUNK_DEPTH)) + local_pos.z;
 	return m_Blocks[posInList].blockType;
 }
@@ -110,9 +110,9 @@ void Chunk::GenerateBlocks(const SimplexNoise& noise)
 			float amplitudeExtreme = 40.0f;
 			float scale = 0.005f;
 
-			float bx = x + (m_Position.x * CHUNK_DEPTH);
+			float bx = (float)x + (m_Position.x * CHUNK_DEPTH);
 			bx *= scale;
-			float bz = z + (m_Position.z * CHUNK_WIDTH);
+			float bz = (float)z + (m_Position.z * CHUNK_WIDTH);
 			bz *= scale;
 
 			float elevation = glm::abs(noise.noise(bx, bz) * amplitude);
