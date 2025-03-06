@@ -39,11 +39,11 @@ void Chunk::SetBlock(const glm::ivec3& position, BlockType type)
 	m_HasChanged = true;
 }
 
-BlockType Chunk::GetBlock(const glm::vec3& position)
+Block Chunk::GetBlock(const glm::vec3& position)
 {
 	glm::ivec3 local_pos = glm::vec3(glm::floor(position.x), glm::floor(position.y), glm::floor(position.z));
 	int posInList = ((local_pos.x * CHUNK_HEIGHT * CHUNK_DEPTH) + (local_pos.y * CHUNK_DEPTH)) + local_pos.z;
-	return m_Blocks[posInList].blockType;
+	return m_Blocks[posInList];
 }
 
 void Chunk::Update()
@@ -218,7 +218,7 @@ void Chunk::GenerateBlocks(const SimplexNoise& noise)
 			{
 				if (y < 50)
 				{
-					if (GetBlock({ x, y, z }) == Air)
+					if (GetBlock({ x, y, z }).blockType == Air)
 					{
 						SetBlock({ x, y, z }, Water);
 					}

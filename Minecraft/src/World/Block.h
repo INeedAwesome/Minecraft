@@ -69,5 +69,12 @@ public:
 			return true;
 		return false;
 	}
+
+	bool IsSolid() const
+	{
+		if (blockType == Air || blockType == Water)
+			return false;
+		return true;
+	}
 };
 

@@ -2,13 +2,19 @@
 
 #include "Camera.h"
 #include "Input.h"
+#include "World/World.h"
 
-#define GRAVITY 15.82
+#define GRAVITY -15.82
+
+const glm::vec3 playerSize(0.4f, 1.8f, 0.4f);
+
 
 class Player
 {
 public:
 	Player();
+
+	void SetWorld(World* world) { m_PlayerWorld = world; }
 
 	void Update(float deltaTime);
 
@@ -36,10 +42,17 @@ public:
 
 	Camera& GetCamera() { return m_Camera; }
 
+	bool IsGrounded(const glm::vec3& position) {
+		glm::vec3 tempPlayerSize = { playerSize.x * 2, playerSize.y, playerSize.z * 2 };
+		AABB below(position, tempPlayerSize);
+		return m_PlayerWorld->CheckCollision(below);
+	}
+
 private:
 	void UpdateCamera();
 
 private:
+	World* m_PlayerWorld;
 	Camera m_Camera;
 	glm::vec3 m_Position = glm::vec3(0, 0, 0);
 	glm::vec3 m_Rotation = glm::vec3(0, 0, 0);
@@ -49,6 +62,6 @@ private:
 	glm::vec3 m_Velocity = glm::vec3(0, 0, 0);
 	glm::vec3 m_Acceleration = glm::vec3(0, 0, 0);
 
-
+	bool m_IsGrounded = false;
 };
 

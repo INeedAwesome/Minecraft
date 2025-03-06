@@ -86,7 +86,7 @@ namespace glm
 
 		T inv_det = static_cast<T>(1) / det;
 
-		// calculate distance, ray intersects triangle
+		// calculate distance, ray Intersects triangle
 		distance = glm::dot(edge2, Perpendicular) * inv_det;
 		baryPosition *= inv_det;
 

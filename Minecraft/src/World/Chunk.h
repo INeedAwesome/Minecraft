@@ -24,7 +24,7 @@ public:
 	glm::ivec3 GetPosition();
 
 	void SetBlock(const glm::ivec3& position, BlockType type);
-	BlockType GetBlock(const glm::vec3& position);
+	Block GetBlock(const glm::vec3& position);
 
 	void Update();
 	void Render();

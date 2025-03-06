@@ -106,10 +106,11 @@ bool Game::Init()
 	for (int i = 0; i < 12; i++)
 		line[i].Create();
 
+	m_World.GenerateAroundPlayer(m_Player.GetPosition());
+
 	m_Player.SetFov(90.0f);
 	m_Player.SetPosition({ 0, 70, 0 });
-
-	m_World.GenerateAroundPlayer(m_Player.GetPosition());
+	m_Player.SetWorld(&m_World);
 
 	return true;
 }
@@ -221,8 +222,8 @@ void Game::ProcessInput(float deltaTime)
 	if (Input::WasMousePressed(MOUSE_RIGHT))
 	{
 		Ray ray{};
-		ray.origin = m_Player.GetPosition();
-		ray.direction = m_Player.GetRotation();
+		ray.origin = m_Player.GetCamera().GetPosition();
+		ray.direction = m_Player.GetCamera().GetRotation();
 
 		glm::ivec3 hitBlock{};
 		glm::ivec3 hitNormal{};
@@ -235,8 +236,8 @@ void Game::ProcessInput(float deltaTime)
 	if (Input::WasMousePressed(MOUSE_LEFT))
 	{
 		Ray ray{};
-		ray.origin = m_Player.GetPosition();
-		ray.direction = m_Player.GetRotation();
+		ray.origin = m_Player.GetCamera().GetPosition();
+		ray.direction = m_Player.GetCamera().GetRotation();
 
 		glm::ivec3 hitBlock{};
 		glm::ivec3 hitNormal{};
@@ -246,26 +247,12 @@ void Game::ProcessInput(float deltaTime)
 		}
 	}
 	
-	if (Input::IsMousePressed(MOUSE_MIDDLE))
-		cameraSpeed = 50.0f;
-
-	if (Input::IsKeyPressed('W'))
-		m_Player.AddMovement({ cameraSpeed * deltaTime * glm::cos(glm::radians(m_Player.GetYaw())), 0, cameraSpeed * deltaTime * glm::sin(glm::radians(m_Player.GetYaw())) });
-	
-	if (Input::IsKeyPressed('S'))
-		m_Player.AddMovement({ -cameraSpeed * deltaTime * glm::cos(glm::radians(m_Player.GetYaw())), 0, -cameraSpeed * deltaTime * glm::sin(glm::radians(m_Player.GetYaw())) });
-	
-	if (Input::IsKeyPressed('A'))
-		m_Player.AddMovement({cameraSpeed * deltaTime * glm::sin(glm::radians(m_Player.GetYaw())), 0, -cameraSpeed * deltaTime * glm::cos(glm::radians(m_Player.GetYaw())) });
-	
-	if (Input::IsKeyPressed('D'))
-		m_Player.AddMovement({-cameraSpeed * deltaTime * glm::sin(glm::radians(m_Player.GetYaw())), 0, cameraSpeed * deltaTime * glm::cos(glm::radians(m_Player.GetYaw())) });
-	
+	/*
 	if (Input::IsKeyPressed(VK_SHIFT))
-		m_Player.AddMovement(cameraSpeed * -glm::normalize(glm::vec3(0, 1, 0)) * deltaTime);
-	
+		m_Player.AddMovement(cameraSpeed * -glm::normalize(glm::vec3(0, 1, 0)) * deltaTime);*/
+	/*
 	if (Input::IsKeyPressed(VK_SPACE))
-		m_Player.AddMovement(cameraSpeed * glm::normalize(glm::vec3(0, 1, 0)) * deltaTime);
+		m_Player.AddMovement(cameraSpeed * glm::normalize(glm::vec3(0, 1, 0)) * deltaTime);*/
 
 	if (Input::WasKeyPressed(VK_RETURN))
 		m_Framebuffer.TakeScreenshot(m_Window.GetWidth(), m_Window.GetHeight());
@@ -290,10 +277,9 @@ void Game::ProcessInput(float deltaTime)
 
 void Game::Update(float deltaTime)
 {
-
 	Ray ray{};
-	ray.origin = m_Player.GetPosition();
-	ray.direction = m_Player.GetRotation();
+	ray.origin = m_Player.GetCamera().GetPosition();
+	ray.direction = m_Player.GetCamera().GetRotation();
 
 	glm::ivec3 hitBlock{};
 	glm::ivec3 hitNormal{}; 
@@ -330,6 +316,7 @@ void Game::Render()
 	m_World.Render();
 	m_Shader.Unbind();
 
+	//glDisable(GL_DEPTH_TEST);
 	for (int i = 0; i < 12; i++)
 		line[i].Draw();
 
@@ -363,6 +350,7 @@ void Game::RenderImGui()
 
 		ImGui::Text("FPS	   : %d", (int)m_FrameData.FPS);
 		ImGui::Text("Frametime : %f(ms)", m_FrameData.Frametime);
+		ImGui::Text("Player Position: %f, %f, %f", m_Player.GetPosition().x, m_Player.GetPosition().y, m_Player.GetPosition().z);
 		ImGui::Spacing();
 		ImGui::Checkbox("Running Game", &m_Run);
 		ImGui::Checkbox("Show Debug Allways", &m_ShowDebugAllways);

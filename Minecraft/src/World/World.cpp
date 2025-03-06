@@ -125,7 +125,7 @@ bool World::CastRay(const Ray& ray, glm::ivec3& hitBlock, glm::ivec3& hitNormal,
 	// Step through the world grid
 	for (float distance = 0.0f; distance < maxDistance && distance > -maxDistance; distance += 0.f) {
 		// Check if the block exists in the world
-		BlockType bt = GetBlock(blockPos);
+		BlockType bt = GetBlock(blockPos).blockType;
 		if (bt != Air) { 
 			hitBlock = blockPos;
 			return true;
@@ -155,15 +155,15 @@ bool World::CastRay(const Ray& ray, glm::ivec3& hitBlock, glm::ivec3& hitNormal,
 	return false;  // No block was hit
 }
 
-BlockType World::GetBlock(const glm::ivec3& position)
+Block World::GetBlock(const glm::ivec3& position)
 {
-	int chunkX = (position.x < 0) ? (position.x - CHUNK_WIDTH + 1) / CHUNK_WIDTH : position.x / CHUNK_WIDTH;
-	int chunkZ = (position.z < 0) ? (position.z - CHUNK_DEPTH + 1) / CHUNK_DEPTH : position.z / CHUNK_DEPTH;
+	int chunkX = (position.x < 0) ? (position.x - (CHUNK_WIDTH - 1)) / CHUNK_WIDTH : position.x / CHUNK_WIDTH;
+	int chunkZ = (position.z < 0) ? (position.z - (CHUNK_DEPTH - 1)) / CHUNK_DEPTH : position.z / CHUNK_DEPTH;
 	glm::vec3 chunkPos = { chunkX, 0, chunkZ };
 
 	// Ensure local coordinates are positive
-	int localX = ((int)position.x % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH;
-	int localZ = ((int)position.z % CHUNK_DEPTH + CHUNK_DEPTH) % CHUNK_DEPTH;
+	int localX = (position.x % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH;
+	int localZ = (position.z % CHUNK_DEPTH + CHUNK_DEPTH) % CHUNK_DEPTH;
 
 	// Find the correct chunk
 	for (Chunk* chunk : m_Chunks) {
@@ -171,7 +171,7 @@ BlockType World::GetBlock(const glm::ivec3& position)
 			return chunk->GetBlock({ localX, position.y, localZ });
 		}
 	}
-	return Air;
+	return {};
 }
 
 void World::SetBlock(const glm::ivec3& position, BlockType block)
